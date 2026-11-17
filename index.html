@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Anonyte Headway Solver</title>
+  <style>
+    :root {
+      --bg-black: #090a0f;
+      --card-bg: #10121a;
+      --border-red: #ef4444;
+      --accent-red: #dc2626;
+      --accent-yellow: #f59e0b;
+      --accent-yellow-light: #fbbf24;
+      --accent-green: #10b981;
+      --accent-green-bright: #34d399;
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    .container {
+      max-width: 860px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-red {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--border-red);
+      border: 1px solid var(--border-red);
+    }
+
+    .badge-yellow {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-yellow-light);
+      border: 1px solid var(--accent-yellow);
+    }
+
+    .badge-green {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green-bright);
+      border: 1px solid var(--accent-green);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .title-red { color: var(--border-red); text-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+    .title-yellow { color: var(--accent-yellow); }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-red);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 20px rgba(239, 68, 68, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-white);
+    }
+
+    .code-box {
+      background: #06070a;
+      border: 1px solid #262936;
+      border-radius: 10px;
+      padding: 14px 18px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      overflow-x: auto;
+    }
+
+    .code-box code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      color: var(--accent-yellow-light);
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .btn-copy {
+      background: var(--border-red);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-copy:hover {
+      background: var(--accent-red);
+      transform: translateY(-1px);
+    }
+
+    .btn-copy.copied {
+      background: var(--accent-green);
+    }
+
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .method-box {
+      background: #090b10;
+      border: 1px solid #1e2230;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .method-box:hover {
+      border-color: var(--accent-yellow);
+    }
+
+    .method-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent-yellow-light);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .method-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .bookmarklet-btn {
+      display: inline-block;
+      text-align: center;
+      background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+      color: #041f14;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+      cursor: move;
+      transition: transform 0.15s;
+    }
+
+    .bookmarklet-btn:hover {
+      transform: scale(1.02);
+    }
+
+    .action-link {
+      color: var(--accent-green-bright);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .action-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      color: #475569;
+      font-size: 12px;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge-bar">
+        <span class="badge badge-red">⚡ Autonomous</span>
+        <span class="badge badge-yellow">Oxford Headway 5e</span>
+        <span class="badge badge-green">Zero API Quota</span>
+      </div>
+      <h1>
+        <span class="title-red">ANONYTE</span> <span class="title-yellow">HEADWAY SOLVER</span>
+      </h1>
+      <p class="subtitle">
+        Instant client-side solver with Marionette unpacking, virtual microphone speech streaming, and cyberpunk interface.
+      </p>
+    </header>
+
+    <!-- Console 1-Liner Card -->
+    <div class="card">
+      <h2>
+        <span>🚀</span>
+        <span>Instant Console 1-Liner ("curl-style")</span>
+      </h2>
+      <p class="method-desc">
+        No Tampermonkey or extension required! Open any Oxford activity, press <kbd style="background:#1e293b; padding:2px 6px; border-radius:4px; font-size:12px;">F12</kbd> (or <kbd style="background:#1e293b; padding:2px 6px; border-radius:4px; font-size:12px;">Ctrl + Shift + J</kbd>), paste this command, and press Enter:
+      </p>
+
+      <div class="code-box">
+        <code id="cmd-script"></code>
+        <button class="btn-copy" onclick="copyCode('cmd-script', this)">Copy</button>
+      </div>
+
+      <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+        <span style="color: var(--accent-green-bright);">●</span>
+        <span>Alternative fetch / eval command (requires CORS):</span>
+      </div>
+
+      <div class="code-box" style="padding: 10px 14px;">
+        <code id="cmd-fetch" style="font-size: 12px;"></code>
+        <button class="btn-copy" style="padding: 6px 10px; font-size: 11px;" onclick="copyCode('cmd-fetch', this)">Copy</button>
+      </div>
+    </div>
+
+    <!-- Alternative Options Grid -->
+    <div class="methods-grid">
+      <!-- Option 1: Bookmarklet -->
+      <div class="method-box">
+        <div class="method-title">
+          <span>🔖</span>
+          <span>Drag-and-Drop Bookmarklet</span>
+        </div>
+        <p class="method-desc">
+          Drag this button up to your Bookmarks Bar. Whenever you open an exercise, simply click it!
+        </p>
+        <div style="margin-top: auto; padding-top: 10px;">
+          <a id="bookmarklet-link" href="#" class="bookmarklet-btn">⚡ Solve Headway</a>
+        </div>
+      </div>
+
+      <!-- Option 2: Tampermonkey Userscript -->
+      <div class="method-box">
+        <div class="method-title">
+          <span>🐵</span>
+          <span>Tampermonkey Userscript</span>
+        </div>
+        <p class="method-desc">
+          For persistent auto-mounting on every Oxford page load without running console commands.
+        </p>
+        <div style="margin-top: auto; padding-top: 10px;">
+          <a href="dist/headway-solver.user.js" class="action-link" target="_blank">
+            📥 Install headway-solver.user.js &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Option 3: Raw Standalone Script -->
+      <div class="method-box">
+        <div class="method-title">
+          <span>⚡</span>
+          <span>Standalone JS File</span>
+        </div>
+        <p class="method-desc">
+          Direct link to the shielded solver payload. Can be hosted on any CDN, S3, Vercel, or Cloudflare worker.
+        </p>
+        <div style="margin-top: auto; padding-top: 10px;">
+          <a href="anonyte-solver.min.js" class="action-link" target="_blank">
+            📄 View anonyte-solver.min.js &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Anonyte Headway Solver &bull; Cyberpunk Red / Black / Green / Yellow &bull; Open Source
+    </footer>
+  </div>
+
+  <script>
+    const origin = window.location.origin;
+    const scriptUrl = origin + '/anonyte-solver.min.js';
+
+    // Script injection command
+    const scriptCmd = `(function(d,s){s=d.createElement('script');s.src='${scriptUrl}?t='+Date.now();d.head.appendChild(s)})(document);`;
+    document.getElementById('cmd-script').innerText = scriptCmd;
+
+    // Fetch / eval command
+    const fetchCmd = `fetch('${scriptUrl}').then(r=>r.text()).then(eval);`;
+    document.getElementById('cmd-fetch').innerText = fetchCmd;
+
+    // Bookmarklet
+    const bmCode = `javascript:(function(){var s=document.createElement('script');s.src='${scriptUrl}?t='+Date.now();document.head.appendChild(s);})();`;
+    document.getElementById('bookmarklet-link').href = bmCode;
+
+    function copyCode(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied! ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
